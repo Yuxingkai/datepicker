@@ -289,6 +289,15 @@ export default {
           this.ymd.m = item
           this.monthShow = false
           this.handleDatePick(new Date(this.ymd.y, this.ymd.m - 1, this.ymd.d))
+          this.selfday = []
+          let date = new Date()
+          let year = date.getFullYear()
+          let month = this.ymd.m
+          let d = new Date(year, month, 0)
+          let days = d.getDate()
+          for (let i = 0; i < days; i++) {
+            this.selfday.push(i + 1)
+          }
           break
         case 'day':
           this.ymd.d = item
@@ -320,15 +329,6 @@ export default {
       }
     },
     select (param) {
-      this.selfday = []
-      let date = new Date()
-      let year = date.getFullYear()
-      let month = date.getMonth() + 1
-      let d = new Date(year, month, 0)
-      let days = d.getDate()
-      for (let i = 0; i < days; i++) {
-        this.selfday.push(i + 1)
-      }
       switch (param) {
         case 'year':
           this.yearShow = true
@@ -347,6 +347,15 @@ export default {
           this.secShow = false
           break
         case 'day':
+          this.selfday = []
+          let date = new Date()
+          let year = this.ymd.y
+          let month = this.ymd.m
+          let d = new Date(year, month, 0)
+          let days = d.getDate()
+          for (let i = 0; i < days; i++) {
+            this.selfday.push(i + 1)
+          }
           this.yearShow = false
           this.monthShow = false
           this.dayShow = true
