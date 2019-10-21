@@ -20,39 +20,51 @@
         <div class="el-picker-panel__body">
           <div class="el-date-picker__time-header" v-if="showTime">
             <span class="el-date-picker__editor-wrap" v-clickoutside="handleTimePickClose">
-              <span @click="select('year')" class="classWrapFirst">{{ ymd.y }}
+              <span @click="select('year')" class="classWrapFirst">
+                <input @blur="blurChange" class="inputClass" v-model="ymd.y" type="text">
                 <div v-if="yearShow" class="classList">
                   <div class="classScroll">
                     <ul class="classContent">
                       <li
+                        @mouseenter="mouseEn(index)"
+                        @mouseleave="mouseLe()"
+                        :class="nowIndex === index ? 'activeClass' : ''"
                         @click.stop="choose('year', item)"
-                        v-for="item in selfyear"
+                        v-for="(item, index) in selfyear"
                       >{{ item }}</li>
                     </ul>
                   </div>
                 </div>
               </span>
-              <span>-</span>
-              <span @click="select('month')" class="classWrap">{{ ymd.m }}
+              <span class="paddingLr">-</span>
+              <span @click="select('month')" class="classWrap">
+                <input @keyup="loadNumberM($event)" @blur="blurChange" class="inputClass" v-model="ymd.m" type="text">
                 <div v-if="monthShow" class="classList">
                   <div class="classScroll">
                     <ul class="classContent">
                       <li
+                        @mouseenter="mouseEn(index)"
+                        @mouseleave="mouseLe()"
+                        :class="nowIndex === index ? 'activeClass' : ''"
                         @click.stop="choose('month', item)"
-                        v-for="item in selfmonth"
+                        v-for="(item, index) in selfmonth"
                       >{{ item }}</li>
                     </ul>
                   </div>
                 </div>
               </span>
-              <span>-</span>
-              <span @click="select('day')" class="classWrap">{{ ymd.d }}
+              <span class="paddingLr">-</span>
+              <span @click="select('day')" class="classWrap">
+                <input @blur="blurChange" class="inputClass" v-model="ymd.d" type="text">
                 <div v-if="dayShow" class="classList">
                   <div class="classScroll">
                     <ul class="classContent">
                       <li
+                        @mouseenter="mouseEn(index)"
+                        @mouseleave="mouseLe()"
+                        :class="nowIndex === index ? 'activeClass' : ''"
                         @click.stop="choose('day', item)"
-                        v-for="item in selfday"
+                        v-for="(item, index) in selfday"
                       >{{ item }}</li>
                     </ul>
                   </div>
@@ -60,40 +72,52 @@
               </span>
             </span>
             <span class="el-date-picker__editor-wrap" v-clickoutside="handleTimePickCloseC">
-              <div ref="input">
-                <span @click="select('hour')" class="classWrapFirst">{{ hms.h }}
+              <div ref="input" style="display: flex">
+                <span @click="select('hour')" class="classWrapFirst">
+                <input @blur="blurChange" class="inputClass" v-model="hms.h" type="text">
                 <div v-if="hourShow" class="classList">
                   <div class="classScroll">
                     <ul class="classContent">
                       <li
+                        @mouseenter="mouseEn(index)"
+                        @mouseleave="mouseLe()"
+                        :class="nowIndex === index ? 'activeClass' : ''"
                         @click.stop="choose('hour', item)"
-                        v-for="item in selfhour"
+                        v-for="(item, index) in selfhour"
                       >{{ item }}</li>
                     </ul>
                   </div>
                 </div>
               </span>
-              <span>:</span>
-              <span @click="select('min')" class="classWrap">{{ hms.m }}
+              <span class="paddingLr">:</span>
+              <span @click="select('min')" class="classWrap">
+                <input @blur="blurChange" class="inputClass" v-model="hms.m" type="text">
                 <div v-if="minShow" class="classList">
                   <div class="classScroll">
                     <ul class="classContent">
                       <li
+                        @mouseenter="mouseEn(index)"
+                        @mouseleave="mouseLe()"
+                        :class="nowIndex === index ? 'activeClass' : ''"
                         @click.stop="choose('min', item)"
-                        v-for="item in selfmin"
+                        v-for="(item, index) in selfmin"
                       >{{ item }}</li>
                     </ul>
                   </div>
                 </div>
               </span>
-              <span>:</span>
-              <span @click="select('sec')" class="classWrap">{{ hms.s }}
+              <span class="paddingLr">:</span>
+              <span @click="select('sec')" class="classWrap">
+                <input @blur="blurChange" class="inputClass" v-model="hms.s" type="text">
                 <div v-if="secShow" class="classList">
                   <div class="classScroll">
                     <ul class="classContent">
                       <li
+                        @mouseenter="mouseEn(index)"
+                        @mouseleave="mouseLe()"
+                        :class="nowIndex === index ? 'activeClass' : ''"
                         @click.stop="choose('sec', item)"
-                        v-for="item in selfsec"
+                        v-for="(item, index) in selfsec"
                       >{{ item }}</li>
                     </ul>
                   </div>
@@ -233,6 +257,27 @@ export default {
   },
 
   methods: {
+    loadNumberM () {
+      let el = event.currentTarget;
+      let elValue = el.value;
+      let reg = /^((?!1)\d{1,2}|12)$/;
+      if (!elValue.match(reg)) {
+        elValue = "";
+        this.ymd.m = 1
+        return false;
+      } else {
+        return true;
+      }
+    },
+    blurChange () {
+      this.emit(new Date(this.ymd.y, this.ymd.m - 1, this.ymd.d, this.hms.h, this.hms.m, this.hms.s), true)
+    },
+    mouseEn (index) {
+      this.nowIndex = index
+    },
+    mouseLe () {
+      this.nowIndex = -1
+    },
     choose (param, item) {
       switch (param) {
         case 'year':
@@ -469,7 +514,6 @@ export default {
     },
 
     handleDatePick (value) {
-      console.log(value.getFullYear(), value.getMonth(), value.getDate())
       this.ymd = {
         y: value.getFullYear(),
         m: value.getMonth() + 1,
@@ -660,6 +704,7 @@ export default {
   },
   data () {
     return {
+      nowIndex: -1,
       ymd: {
         y: '年',
         m: '月',
@@ -681,16 +726,6 @@ export default {
       selfmin: [],
       selfsec: [],
       selfyear: [
-        '2010',
-        '2011',
-        '2012',
-        '2013',
-        '2014',
-        '2015',
-        '2016',
-        '2017',
-        '2018',
-        '2019'
       ],
       selfmonth: [
         '1',
@@ -743,6 +778,9 @@ export default {
     }
     // 获取当前时间
     let nowDate = new Date()
+    for (let i = nowDate.getFullYear() - 10; i < nowDate.getFullYear() + 1; i++) {
+      this.selfyear.push(i)
+    }
     this.ymd = {
       y: nowDate.getFullYear(),
       m: nowDate.getMonth() + 1,
@@ -829,7 +867,7 @@ export default {
   }
   .el-date-picker__editor-wrap {
     padding-top: 3px;
-    display: inline-block;
+    display: flex;
     width: 140px;
     height: 32px;
     border-radius:3px;
@@ -880,12 +918,29 @@ export default {
     position: relative;cursor: pointer
   }
   .classList {
-    width: 50px;position: absolute;z-index: 1;top: 30px;left: 0;background: #111D39;border:1px solid rgba(87,149,255,1);overflow: hidden;height: 150px;
+    width: 54px;
+    position: absolute;
+    z-index: 1;
+    top: 30px;
+    left: 0;
+    background: #192C57;
+    box-shadow: 0 2px 14px 0 rgba(0,0,0,0.40);
+    overflow: hidden;
+    height: 150px;
   }
   .classScroll {
-    width: 70px;height: 100%;overflow-y: scroll;
+    width: 78px;height: 100%;overflow-y: scroll;
   }
   .classContent {
-    margin: 0;list-style:none;padding: 0;width: 50px;text-align: center
+    margin: 0;list-style:none;padding: 0 2px;width: 54px;text-align: center
+  }
+  .activeClass {
+    background: #233869;
+  }
+  .inputClass {
+    text-align: center;background: none;border: none;color: white;width: 100%;height: 70%
+  }
+  .paddingLr {
+    padding: 0 2px;
   }
 </style>

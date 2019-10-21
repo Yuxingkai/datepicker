@@ -939,8 +939,7 @@ export default {
   }
   .el-picker-panel {
     color: white;
-    border: 1px solid #e4e7ed;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
+    box-shadow: 0 2px 14px 0 rgba(0,0,0,0.40);
     background:rgba(25,44,87,1);
     border-radius: 4px;
     line-height: 30px;
